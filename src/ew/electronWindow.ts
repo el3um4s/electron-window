@@ -12,20 +12,20 @@ import EventEmitter = require("events");
 import autoUpdater from "@el3um4s/ipc-for-electron-auto-updater";
 import { IPC } from "@el3um4s/ipc-for-electron";
 
-interface CreateWindow {
+export interface CreateWindow {
   url: string;
   iconPath?: string;
   preload?: string;
   themeSource?: "system" | "light" | "dark";
 }
 
-interface CreateBrowserView {
+export interface CreateBrowserView {
   url?: string;
   preload?: string;
   bounds?: BrowserViewBounds;
 }
 
-interface BrowserViewBounds {
+export interface BrowserViewBounds {
   paddingLeft?: number;
   paddingTop?: number;
   paddingRight?: number;
@@ -51,13 +51,15 @@ class ElectronWindow {
 
   browserView!: BrowserView;
 
-  constructor(settings: { [key: string]: unknown } | null = null) {
+  constructor(
+    settings: Electron.BrowserWindowConstructorOptions | null = null
+  ) {
     this.settings = settings
       ? { ...defaultSettings, ...settings }
       : { ...defaultSettings };
   }
 
-  createWindow(options?: CreateWindow) {
+  createWindow(options?: CreateWindow): BrowserWindow {
     const {
       url = "",
       iconPath = "icon.png",
@@ -94,11 +96,11 @@ class ElectronWindow {
     return window;
   }
 
-  async setIpcMain(api: Array<IPC>) {
+  async setIpcMain(api: Array<IPC>): Promise<void> {
     api.forEach(async (el) => el.initIpcMain(ipcMain, this.window));
   }
 
-  async addBrowserView(options?: CreateBrowserView) {
+  async addBrowserView(options?: CreateBrowserView): Promise<void> {
     const { url = "", preload = this.preload } = options ? options : {};
     const {
       bounds = {
@@ -161,7 +163,7 @@ class ElectronWindow {
     }
   }
 
-  async addBrowserViewHidden(options?: CreateBrowserView) {
+  async addBrowserViewHidden(options?: CreateBrowserView): Promise<void> {
     const bounds = {
       paddingLeft: 0,
       paddingTop: 0,
@@ -172,11 +174,11 @@ class ElectronWindow {
     this.addBrowserView({ ...options, bounds });
   }
 
-  async setIpcMainView(api: Array<IPC>) {
+  async setIpcMainView(api: Array<IPC>): Promise<void> {
     api.forEach(async (el) => el.initIpcMain(ipcMain, this.browserView));
   }
 
-  async addAutoUpdater() {
+  async addAutoUpdater(): Promise<void> {
     autoUpdater.initAutoUpdater(this.window);
     autoUpdater.checkForUpdates();
   }

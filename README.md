@@ -1,106 +1,238 @@
-# Typescript NPM Package Starter
-My template for creating npm packages using typescript.
+# Electron Window (NOT YET TESTED)
 
-- TS to JS
-- Testing via Jest, includes coverage
-- ESLint
-- Ignore files to ensure minimal code is stored/shipped
+Electron - create a window with optional autoupdater and browserview
 
-NPM link: [@el3um4s/typescript-npm-package-starter](https://www.npmjs.com/package/@el3um4s/typescript-npm-package-starter)
-
-### Getting Started
-
-To create a new project based on this template using degit:
-
-```bash
-npx degit el3um4s/typescript-npm-package-starter
-```
-
-Then install the dependencies with
-
-```bash
-npm install
-```
-
-Now update the name field in package.json with your desired package name. Then update the homepage field in package.json. And finally add your code.
-
-### Build the package
-
-Run
-
-```bash
-npm run build
-```
-
-### Test the package
-
-You can test the code with [Jest](https://jestjs.io/)
-
-```bash
-npm test
-```
-
-You can find the test coverage in `coverage/lcov-report/index.html`.
-
-### Check dependencies
-
-You can check and upgrade dependencies to the latest versions, ignoring specified versions. with [npm-check-updates](https://www.npmjs.com/package/npm-check-updates):
-
-```bash
-npm run check-updates
-```
-
-You can also use `npm run check-updates:minor` to update only patch and minor.
-
-Instead `npm run check-updates:patch` only updates patch.
-
-### Publish
-
-First commit the changes to GitHub. Then login to your [NPM](https://www.npmjs.com) account (If you don’t have an account you can do so on [https://www.npmjs.com/signup](https://www.npmjs.com/signup))
-
-```bash
-npm login
-```
-
-Then run publish:
-
-```bash
-npm publish
-```
-
-If you're using a scoped name use:
-
-```bash
-npm publish --access public
-```
-
-### Bumping a new version
-
-To update the package use:
-
-```bash
-npm version patch
-```
-
-and then
-
-```bash
-npm publish
-```
+NPM link: [@el3um4s/electron-window](https://www.npmjs.com/package/@el3um4s/electron-window)
 
 ### Install and use the package
 
 To use the package in a project:
 
 ```bash
-npm i @el3um4s/typescript-npm-package-starter
+npm i @el3um4s/electron-window
 ```
 
 and then in a file:
 
 ```ts
-import { ciao } from "@el3um4s/typescript-npm-package-starter";
+import ElectronWindow from "@el3um4s/electron-window";
+import windowControls from "@el3um4s/renderer-for-electron-window-controls";
 
-const b = ciao("mondo");
-console.log(b); // Ciao Mondo
+const createWindow = async (options: {
+  url: string;
+  preload: string;
+  themeSource?: "system" | "light" | "dark";
+  settings?: Electron.BrowserWindowConstructorOptions;
+}): Promise<ElectronWindow> => {
+  let window: ElectronWindow;
+
+  const { url, themeSource = "system", preload } = options;
+
+  const settings = {
+    ...options?.settings,
+    title: "GEST DASHBOARD",
+  };
+  window = new ElectronWindow(settings);
+
+  window.createWindow({ url, themeSource, preload });
+
+  await window.setIpcMain([windowControls]);
+
+  await window.addBrowserViewHidden();
+  await window.setIpcMainView([windowControls]);
+
+  window.addAutoUpdater();
+  return window;
+};
+
+let electronWindow: ElectronWindow;
+
+electronWindow = await createWindow({
+  url,
+  preload,
+  themeSource: "light",
+  settings: {
+    x: Math.floor(Math.random() * 64),
+    y: Math.floor(Math.random() * 64),
+  },
+});
+```
+
+### API
+
+`new ElectronWindow(settings?: Electron.BrowserWindowConstructorOptions):ElectronWindow`: create a new instance of ElectronWindow
+
+```ts
+import ElectronWindow from "@el3um4s/electron-window";
+
+let window: ElectronWindow;
+
+const settings = {
+  title: "GEST DASHBOARD",
+  backgroundColor: "red",
+};
+
+window = new ElectronWindow(settings);
+```
+
+`createWindow(options?: CreateWindow): BrowserWindow`: create a new window
+
+```ts
+import ElectronWindow from "@el3um4s/electron-window";
+
+let window: ElectronWindow;
+
+const options = {
+  url: "https://www.google.com",
+  themeSource: "light",
+  preload: "path/to/preload.js",
+};
+
+window = new ElectronWindow();
+window.createWindow(options);
+```
+
+`async setIpcMain(api: Array<IPC>): Promise<void>`: set the ipcMain for the window
+
+Use `el3um4s/ipc-for-electron` ([GitHub](https://github.com/el3um4s/ipc-for-electron), [NPM](https://www.npmjs.com/package/@el3um4s/ipc-for-electron)) to set the ipcMain for the window
+
+```ts
+import ElectronWindow from "@el3um4s/electron-window";
+import windowControls from "@el3um4s/renderer-for-electron-window-controls";
+
+let window: ElectronWindow;
+
+window = new ElectronWindow();
+window.createWindow();
+
+const listAPI = [windowControls];
+await window.setIpcMain(listAPI);
+```
+
+`async addAutoUpdater(): Promise<void>`: add the autoUpdater to the window
+
+Use `el3um4s/renderer-for-electron-auto-updater` ([GitHub](https://github.com/el3um4s/ipc-for-electron-auto-updater), [NPM](https://github.com/el3um4s/renderer-for-electron-auto-updater)).
+
+```ts
+import ElectronWindow from "@el3um4s/electron-window";
+
+let window: ElectronWindow;
+
+window = new ElectronWindow();
+window.createWindow();
+
+window.addAutoUpdater();
+```
+
+`async addBrowserView(options?: CreateBrowserView): Promise<void>`: add a browserView to the window
+
+```ts
+import ElectronWindow from "@el3um4s/electron-window";
+
+let window: ElectronWindow;
+
+window = new ElectronWindow();
+window.createWindow();
+
+const options = {
+  url: "https://www.google.com",
+  preload: "path/to/preload.js",
+  bounds: {
+    paddingLeft: 64,
+    paddingTop: 64,
+    paddingRight: 64,
+    paddingBottom: 64,
+  },
+};
+
+await window.addBrowserView(options);
+```
+
+`async addBrowserViewHidden(options?: CreateBrowserView): Promise<void>`: add a browserView to the window and hide it
+
+```ts
+import ElectronWindow from "@el3um4s/electron-window";
+
+let window: ElectronWindow;
+
+window = new ElectronWindow();
+window.createWindow();
+
+const options = {
+  url: "https://www.google.com",
+  preload: "path/to/preload.js",
+};
+
+await window.addBrowserViewHidden(options);
+```
+
+`async setIpcMainView(api: Array<IPC>): Promise<void>`: set the ipcMain for the browserView
+
+Use `el3um4s/ipc-for-electron` ([GitHub](https://github.com/el3um4s/ipc-for-electron), [NPM](https://www.npmjs.com/package/@el3um4s/ipc-for-electron)) to set the ipcMain for the window
+
+```ts
+import ElectronWindow from "@el3um4s/electron-window";
+import systemInfo from "@el3um4s/ipc-for-electron-system-info";
+
+let window: ElectronWindow;
+
+window = new ElectronWindow();
+window.createWindow();
+
+const options = {
+  url: "https://www.google.com",
+  preload: "path/to/preload.js",
+};
+
+await window.addBrowserViewHidden(options);
+
+const listAPI = [systemInfo];
+await window.setIpcMainView(listAPI);
+```
+
+### Default settings
+
+```ts
+const defaultSettings = {
+  title: appName,
+  width: 854,
+  height: 480,
+  frame: false,
+  backgroundColor: "#FFF",
+};
+```
+
+### Interfaces
+
+**CreateWindow**
+
+```ts
+interface CreateWindow {
+  url: string;
+  iconPath?: string;
+  preload?: string;
+  themeSource?: "system" | "light" | "dark";
+}
+```
+
+**CreateBrowserView**
+
+```ts
+interface CreateBrowserView {
+  url?: string;
+  preload?: string;
+  bounds?: BrowserViewBounds;
+}
+```
+
+**BrowserViewBounds**
+
+```ts
+interface BrowserViewBounds {
+  paddingLeft?: number;
+  paddingTop?: number;
+  paddingRight?: number;
+  paddingBottom?: number;
+  show?: boolean;
+}
 ```
