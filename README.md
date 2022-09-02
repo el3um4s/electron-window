@@ -12,7 +12,7 @@ To use the package in a project:
 npm i @el3um4s/electron-window
 ```
 
-and then in a file:
+Then in a file:
 
 ```ts
 import ElectronWindow from "@el3um4s/electron-window";
@@ -111,7 +111,17 @@ await window.setIpcMain(listAPI);
 
 `async addAutoUpdater(): Promise<void>`: add the autoUpdater to the window
 
-Use `el3um4s/renderer-for-electron-auto-updater` ([GitHub](https://github.com/el3um4s/ipc-for-electron-auto-updater), [NPM](https://github.com/el3um4s/renderer-for-electron-auto-updater)).
+If you want to use the autoupdater, you need to install
+
+- `el3um4s/ipc-for-electron` ([GitHub](https://github.com/el3um4s/ipc-for-electron), [NPM](https://www.npmjs.com/package/@el3um4s/ipc-for-electron))
+- `el3um4s/ipc-for-electron-auto-updater` ([GitHub](https://github.com/el3um4s/ipc-for-electron), [NPM](https://www.npmjs.com/package/@el3um4s/ipc-for-electron))
+- `el3um4s/renderer-for-electron-auto-updater` ([GitHub](https://github.com/el3um4s/ipc-for-electron), [NPM](https://www.npmjs.com/package/@el3um4s/ipc-for-electron))
+
+```bash
+npm i @el3um4s/electron-window @el3um4s/ipc-for-electron @el3um4s/ipc-for-electron-auto-updater @el3um4s/renderer-for-electron-auto-updater
+```
+
+In the main process:
 
 ```ts
 import ElectronWindow from "@el3um4s/electron-window";
@@ -122,6 +132,17 @@ window = new ElectronWindow();
 window.createWindow();
 
 window.addAutoUpdater();
+```
+
+In the preload file:
+
+```ts
+import { generateContextBridge } from "@el3um4s/ipc-for-electron";
+import autoUpdater from "@el3um4s/ipc-for-electron-auto-updater";
+
+const listAPI = [autoUpdater];
+
+generateContextBridge(listAPI, "ipc");
 ```
 
 `async addBrowserView(options?: CreateBrowserView): Promise<void>`: add a browserView to the window
