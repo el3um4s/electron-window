@@ -179,6 +179,7 @@ class ElectronWindow {
   }
 
   async addAutoUpdater(): Promise<void> {
+    this.setIpcMain([autoUpdater]);
     autoUpdater.initAutoUpdater(this.window);
     autoUpdater.checkForUpdates();
   }
