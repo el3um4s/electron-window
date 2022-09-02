@@ -62,7 +62,7 @@ class ElectronWindow {
   createWindow(options?: CreateWindow): BrowserWindow {
     const {
       url = "",
-      iconPath = "icon.png",
+      iconPath = path.join(__dirname, "icon.png"),
       preload = path.join(__dirname, "preload.js"),
       themeSource = "system",
     } = options ? options : {};
@@ -74,7 +74,7 @@ class ElectronWindow {
 
     const window = new BrowserWindow({
       ...settings,
-      icon: path.join(__dirname, iconPath),
+      icon: iconPath,
       show: false,
       webPreferences: {
         preload,
