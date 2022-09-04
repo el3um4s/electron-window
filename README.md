@@ -58,7 +58,48 @@ electronWindow = await createWindow({
 });
 ```
 
-### API
+To use in the renderer install:
+
+```bash
+npm i @el3um4s/electron-window @el3um4s/renderer-electron-window-browser-view  @el3um4s/ipc-for-electron
+```
+
+Then in the preload file:
+
+```ts
+import { generateContextBridge } from "@el3um4s/ipc-for-electron";
+import { browserView } from "@el3um4s/electron-window";
+
+const listAPI = [browserView];
+
+generateContextBridge(listAPI, "ipc");
+```
+
+Then in the renderer:
+
+```ts
+import browserView from "@el3um4s/renderer-electron-window-browser-view";
+
+browserView.openInBrowserView({ url: "https://www.google.com", apiKey: "ipc" });
+
+browserView.showBrowserView({
+  bounds: {
+    paddingLeft: 64,
+    paddingTop: 64,
+    paddingRight: 128,
+    paddingBottom: 128,
+  },
+  apiKey: "ipc",
+});
+
+chokidar.on.browserViewCanBeShowed({
+  callback: (data) => {
+    console.log(data);
+  },
+});
+```
+
+### API: main process
 
 `new ElectronWindow(settings?: Electron.BrowserWindowConstructorOptions):ElectronWindow`: create a new instance of ElectronWindow
 
@@ -209,6 +250,176 @@ await window.addBrowserViewHidden(options);
 
 const listAPI = [systemInfo];
 await window.setIpcMainView(listAPI);
+```
+
+### API: browserView - Electron Side
+
+- `openInBrowserView`: open the url in the browserView.
+- `showBrowserView`: show the browserView. The response is sent to the `showBrowserView` channel.
+- `resizeBrowserViewToMaximized`: resize the browserView to the maximized size.
+- `resizeBrowserViewToUnMaximized`: resize the window to the un-maximized size.
+- `removeBrowserView`: remove the browserView.
+- `openBrowserViewDevTools`: open the devTools of the browserView.
+- `printBrowserView`: print the browserView.
+- `goBackBrowserView`: go back in the browserView.
+- `goForwardBrowserView`: go forward in the browserView.
+- `reloadCurrentPageBrowserView`: reload the current page in the browserView.
+
+### API: browserView - Renderer Side
+
+`on.browserViewCanBeShowed = async (options: { callback?: (arg0: boolean) => void; apiKey?: string; }): Promise<boolean>`
+
+example:
+
+```ts
+import browserView from "@el3um4s/renderer-electron-window-browser-view";
+
+browserView.openInBrowserView({ url: "https://www.google.com", apiKey: "ipc" });
+
+browserView.showBrowserView({
+  bounds: {
+    paddingLeft: 64,
+    paddingTop: 64,
+    paddingRight: 128,
+    paddingBottom: 128,
+  },
+  apiKey: "ipc",
+});
+
+chokidar.on.browserViewCanBeShowed({
+  callback: (data) => {
+    console.log(data);
+  },
+});
+```
+
+`showBrowserView = async (options: { callback?: (arg0: boolean) => void; apiKey?: string; bounds?: BrowserViewBounds; }): Promise<boolean>`: show the browserView
+
+example:
+
+```ts
+import browserView from "@el3um4s/renderer-electron-window-browser-view";
+
+browserView.openInBrowserView({ url: "https://www.google.com", apiKey: "ipc" });
+
+browserView.showBrowserView({
+  bounds: {
+    paddingLeft: 64,
+    paddingTop: 64,
+    paddingRight: 128,
+    paddingBottom: 128,
+  },
+  apiKey: "ipc",
+  callback: (data) => {
+    console.log(
+      data ? "BrowserView can be shown" : "BrowserView can't be shown"
+    );
+  },
+});
+```
+
+`openInBrowserView = (options: { apiKey?: string; url: string }): void`: open the url in the browserView
+
+example:
+
+```ts
+import browserView from "@el3um4s/renderer-electron-window-browser-view";
+
+browserView.openInBrowserView({ url: "https://www.google.com", apiKey: "ipc" });
+```
+
+`resizeBrowserViewToMaximized = (options?: { apiKey?: string; bounds?: BrowserViewBounds; }): void`: resize the browserView to the maximized size
+
+example:
+
+```ts
+import browserView from "@el3um4s/renderer-electron-window-browser-view";
+
+const bounds: {
+  paddingLeft: 64;
+  paddingTop: 64;
+  paddingRight: 64;
+  paddingBottom: 64;
+};
+
+browserView.resizeBrowserViewToMaximized({ bounds, apiKey: "ipc" });
+```
+
+`resizeBrowserViewToUnMaximized = (options?: { apiKey?: string; bounds?: BrowserViewBounds; }): void`: resize the browserView to the un-maximized size
+
+example:
+
+```ts
+import browserView from "@el3um4s/renderer-electron-window-browser-view";
+
+const bounds: {
+  paddingLeft: 64;
+  paddingTop: 64;
+  paddingRight: 64;
+  paddingBottom: 64;
+};
+
+browserView.resizeBrowserViewToUnMaximized({ bounds });
+```
+
+`removeBrowserView = (options?: { apiKey?: string }): void`: remove the browserView
+
+example:
+
+```ts
+import browserView from "@el3um4s/renderer-electron-window-browser-view";
+
+browserView.removeBrowserView({ apiKey: "ipc" });
+```
+
+`openBrowserViewDevTools = (options?: { apiKey?: string }): void`: open the dev tools window of the browserView
+
+example:
+
+```ts
+import browserView from "@el3um4s/renderer-electron-window-browser-view";
+
+browserView.openBrowserViewDevTools();
+```
+
+`printBrowserView = (options?: { apiKey?: string }): void`: print the browserView
+
+example:
+
+```ts
+import browserView from "@el3um4s/renderer-electron-window-browser-view";
+
+browserView.printBrowserView();
+```
+
+`goBackBrowserView = (options?: { apiKey?: string }): void`: go back in the browserView
+
+example:
+
+```ts
+import browserView from "@el3um4s/renderer-electron-window-browser-view";
+
+browserView.goBackBrowserView();
+```
+
+`goForwardBrowserView = (options?: { apiKey?: string }): void`: go forward in the browserView
+
+example:
+
+```ts
+import browserView from "@el3um4s/renderer-electron-window-browser-view";
+
+browserView.goForwardBrowserView();
+```
+
+`reloadCurrentPageBrowserView = (options?: { apiKey?: string }): void`: reload the current page in the browserView
+
+example:
+
+```ts
+import browserView from "@el3um4s/renderer-electron-window-browser-view";
+
+browserView.reloadCurrentPageBrowserView();
 ```
 
 ### Default settings

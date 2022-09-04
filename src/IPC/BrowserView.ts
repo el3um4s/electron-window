@@ -10,8 +10,8 @@ const nameAPI: NameAPI = "browserView";
 
 // to Main
 const validSendChannel: SendChannels = {
-  openInBrowserView: openInBrowserView,
   showBrowserView: showBrowserView,
+  openInBrowserView: openInBrowserView,
   removeBrowserView: removeBrowserView,
   openBrowserViewDevTools: openBrowserViewDevTools,
   printBrowserView: printBrowserView,
@@ -74,11 +74,11 @@ function setBounds(
 async function openInBrowserView(
   customWindow: BrowserWindow,
   event: Electron.IpcMainEvent,
-  message: { src: string }
+  message: { url: string }
 ) {
   const bw = customWindow.getBrowserView();
   if (bw) {
-    bw.webContents.loadURL(message.src);
+    bw.webContents.loadURL(message.url);
   }
 }
 
@@ -92,10 +92,8 @@ async function showBrowserView(
   const { show = true } = message;
 
   if (show) {
-    const present = bw ? "yes" : "no";
-    customWindow.webContents.send("showBrowserView", {
-      present,
-    });
+    const canShow = bw ? true : false;
+    customWindow.webContents.send("showBrowserView", canShow);
   }
 
   setBounds(customWindow, message, true);
