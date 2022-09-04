@@ -5,5 +5,7 @@ import type {
   BrowserViewBounds,
 } from "./ew/ElectronWindow";
 
-export { CreateWindow, CreateBrowserView, BrowserViewBounds };
+import browserView from "./IPC/BrowserView";
+
+export { CreateWindow, CreateBrowserView, BrowserViewBounds, browserView };
 export default ElectronWindow;
