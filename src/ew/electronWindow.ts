@@ -12,26 +12,7 @@ import EventEmitter = require("events");
 import autoUpdater from "@el3um4s/ipc-for-electron-auto-updater";
 import { IPC } from "@el3um4s/ipc-for-electron";
 
-export interface CreateWindow {
-  url: string;
-  iconPath?: string;
-  preload?: string;
-  themeSource?: "system" | "light" | "dark";
-}
-
-export interface CreateBrowserView {
-  url?: string;
-  preload?: string;
-  bounds?: BrowserViewBounds;
-}
-
-export interface BrowserViewBounds {
-  paddingLeft?: number;
-  paddingTop?: number;
-  paddingRight?: number;
-  paddingBottom?: number;
-  show?: boolean;
-}
+import { CreateWindow, CreateBrowserView } from "../IPC/interfaces";
 
 const appName = "appName";
 

@@ -1,5 +1,5 @@
 import { NameAPI_BrowserView as NameAPI, DefaultApiKey } from "./interfaces";
-import { BrowserViewBounds } from "../ew/electronWindow";
+import { BrowserViewBounds } from "./interfaces";
 
 const nameAPI: NameAPI = "browserView";
 const defaultApiKey: DefaultApiKey = "ipc";

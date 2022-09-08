@@ -3,7 +3,7 @@ import type {
   CreateWindow,
   CreateBrowserView,
   BrowserViewBounds,
-} from "./ew/ElectronWindow";
+} from "./IPC/interfaces";
 
 import browserView from "./IPC/BrowserView";
 

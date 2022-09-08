@@ -4,7 +4,7 @@ import { IPC, SendChannels } from "@el3um4s/ipc-for-electron";
 import { BrowserWindow } from "electron";
 
 import { NameAPI_BrowserView as NameAPI } from "./interfaces";
-import { BrowserViewBounds } from "../ew/electronWindow";
+import { BrowserViewBounds } from "./interfaces";
 
 const nameAPI: NameAPI = "browserView";
 
