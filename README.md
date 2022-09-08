@@ -92,7 +92,7 @@ browserView.showBrowserView({
   apiKey: "ipc",
 });
 
-chokidar.on.browserViewCanBeShowed({
+browserView.on.browserViewCanBeShowed({
   callback: (data) => {
     console.log(data);
   },
@@ -286,7 +286,7 @@ browserView.showBrowserView({
   apiKey: "ipc",
 });
 
-chokidar.on.browserViewCanBeShowed({
+browserView.on.browserViewCanBeShowed({
   callback: (data) => {
     console.log(data);
   },
