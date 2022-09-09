@@ -1,4 +1,4 @@
-# Electron Window (NOT YET TESTED)
+# Electron Window
 
 Electron - create a window with optional autoupdater and browserview
 
