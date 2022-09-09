@@ -74,11 +74,11 @@ function setBounds(
 async function openInBrowserView(
   customWindow: BrowserWindow,
   event: Electron.IpcMainEvent,
-  message: { url: string }
+  message: string
 ) {
   const bw = customWindow.getBrowserView();
   if (bw) {
-    bw.webContents.loadURL(message.url);
+    bw.webContents.loadURL(message);
   }
 }
 
