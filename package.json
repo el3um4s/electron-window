@@ -1,6 +1,6 @@
 {
   "name": "@el3um4s/electron-window",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Electron - create a window with optional autoupdater and browserview",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
