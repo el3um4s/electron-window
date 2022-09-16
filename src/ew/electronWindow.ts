@@ -77,6 +77,10 @@ class ElectronWindow {
     return window;
   }
 
+  loadUrl(url: string): void {
+    this.window.loadURL(url);
+  }
+
   async setIpcMain(api: Array<IPC>): Promise<void> {
     api.forEach(async (el) => el.initIpcMain(ipcMain, this.window));
   }

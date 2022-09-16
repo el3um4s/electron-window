@@ -133,6 +133,25 @@ window = new ElectronWindow();
 window.createWindow(options);
 ```
 
+`loadUrl(url: string): void`: load a new url in the window
+
+```ts
+import ElectronWindow from "@el3um4s/electron-window";
+
+let window: ElectronWindow;
+
+const options = {
+  url: "https://www.google.com",
+  themeSource: "light",
+  preload: "path/to/preload.js",
+};
+
+window = new ElectronWindow();
+window.createWindow(options);
+
+window.loadUrl("https://www.youtube.com");
+```
+
 `async setIpcMain(api: Array<IPC>): Promise<void>`: set the ipcMain for the window
 
 Use `el3um4s/ipc-for-electron` ([GitHub](https://github.com/el3um4s/ipc-for-electron), [NPM](https://www.npmjs.com/package/@el3um4s/ipc-for-electron)) to set the ipcMain for the window
